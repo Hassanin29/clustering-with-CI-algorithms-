@@ -18,9 +18,9 @@ X_scaled = scaler.fit_transform(X)
 # ============================================
 # 2. تشغيل K-Means
 # ============================================
-def run_kmeans(n_clusters=5, n_init=30, seed=42):
-    """تشغيل K-Means عدة مرات وأخذ أفضل نتيجة"""
-    kmeans = KMeans(n_clusters=n_clusters, n_init=n_init, random_state=seed)
+def run_kmeans(n_clusters=5, n_init=30):
+    """تشغيل K-Means (بيستخدم np.random.seed من بره)"""
+    kmeans = KMeans(n_clusters=n_clusters, n_init=n_init, random_state=np.random.randint(10000))
     kmeans.fit(X_scaled)
     
     # حساب SSE
@@ -29,7 +29,10 @@ def run_kmeans(n_clusters=5, n_init=30, seed=42):
     # المراكز
     centroids = scaler.inverse_transform(kmeans.cluster_centers_)
     
-    return centroids, sse
+    # تاريخ وهمي للتوافق
+    history = [sse]
+    
+    return centroids, sse, history
 
 def visualize_clusters(centroids, title="K-Means Clustering"):
     """رسم النتائج"""
@@ -52,6 +55,7 @@ def visualize_clusters(centroids, title="K-Means Clustering"):
 # 3. التشغيل
 # ============================================
 if __name__ == "__main__":
-    centroids, sse = run_kmeans()
+    np.random.seed(42)
+    centroids, sse, history = run_kmeans()
     print(f"K-Means Final SSE: {sse:.4f}")
     visualize_clusters(centroids)
